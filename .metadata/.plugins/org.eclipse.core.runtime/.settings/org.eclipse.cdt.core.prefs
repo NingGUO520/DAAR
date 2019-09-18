@@ -1,0 +1,14 @@
+ToolChainManager/order/0.id=gcc-x86_64-/usr/local/eclipseCPP/bin/gcc
+ToolChainManager/order/0.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/1.id=gcc-x86_64-/usr/bin/gcc
+ToolChainManager/order/1.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/2.id=gcc-x86_64-/usr/bin/x86_64-linux-gnu-gcc
+ToolChainManager/order/2.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/3.id=gcc-x86_64-/usr/bin/c99-gcc
+ToolChainManager/order/3.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/4.id=gcc-x86_64-/usr/bin/c89-gcc
+ToolChainManager/order/4.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/n=5
+eclipse.preferences.version=1
+errorparser.default.ids=
+language.settings.providers.workspace.prefs.toggle=false

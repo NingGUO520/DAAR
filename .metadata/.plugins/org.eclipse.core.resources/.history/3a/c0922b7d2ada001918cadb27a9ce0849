@@ -1,0 +1,11 @@
+package reg;
+
+public class Test {
+
+	public static void main(String[] args) {
+			int tab[] = new int[10];
+			for(int a :tab) 
+			System.out.println(a);
+	}
+
+}

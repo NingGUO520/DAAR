@@ -1,0 +1,15 @@
+package reg;
+
+public class Test {
+
+	
+	public static modif_tab(int t[]) {
+		
+	}
+	public static void main(String[] args) {
+			int tab[] = new int[10];
+			for(int a :tab) 
+			System.out.println(a);
+	}
+
+}
