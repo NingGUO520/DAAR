@@ -1,5 +1,10 @@
 package regex;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 public class Matching {
 
 
@@ -108,13 +113,27 @@ public class Matching {
 	public static void main(String[] args) {
 
 
+		String nomFichier = "60341-0.txt";
+		
 		Matching matching = new Matching();
 		char[] facteur = {'m','a','m','a','m','i','a'};
 		char[] facteur2 = {'c','h','i','c','h','a'};
 		char[] facteur3 = {'S','a','r','g','o','n'};
 		char[] facteur4 = {'c','h','i','c','h','i','c','h','a'};
 
-
+//		
+//		try {
+//			FileInputStream flux =new FileInputStream(nomFichier); 
+//			ObjectInputStream lecture = new ObjectInputStream(flux);
+//			
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		
 		int[] retenue =  matching.calculerTabRetenue(facteur4);
 		System.out.println("tableau de retenue: " );
