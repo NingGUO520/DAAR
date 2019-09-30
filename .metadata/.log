@@ -337,3 +337,15 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:385)
 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:213)
 	... 9 more
+
+!ENTRY org.eclipse.core.net 1 0 2019-09-30 16:05:27.608
+!MESSAGE System property http.proxyHost is set to proxy.ufr-info-p6.jussieu.fr but should not be set.
+
+!ENTRY org.eclipse.core.net 1 0 2019-09-30 16:05:27.609
+!MESSAGE System property http.proxyPort is set to 3128 but should not be set.
+
+!ENTRY org.eclipse.core.net 1 0 2019-09-30 16:05:27.610
+!MESSAGE System property https.proxyHost is set to proxy but should not be set.
+
+!ENTRY org.eclipse.core.net 1 0 2019-09-30 16:05:27.611
+!MESSAGE System property https.proxyPort is set to 3128 but should not be set.

@@ -1,19 +1,4 @@
 INDEX VERSION 1.130+/users/nfs/Etu9/3775759/workspaceDAAR/.metadata/.plugins/org.eclipse.jdt.core
-2839167428.index
-2396374576.index
 4232520558.index
-2682952679.index
-2473612131.index
-1281677646.index
-1032886694.index
-4230786839.index
-720836995.index
-4140945150.index
-4279816516.index
-3448542329.index
+2336232440.index
 1699640020.index
-3347395434.index
-955921485.index
-2835006370.index
-3644885222.index
-841182778.index
