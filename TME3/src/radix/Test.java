@@ -17,7 +17,7 @@ public class Test {
 			chars = null;
 			fils = new ArrayList<RadixTree>();
 		}
-		
+
 		public RadixTree(String lettres) {
 			chars = lettres;
 			fils = new ArrayList<RadixTree>();
@@ -87,14 +87,17 @@ public class Test {
 				arbre.fils.add(nouvelle);
 			}
 		}else {
+			boolean prefixCommun = false;
 			for(int i = 0; i< arbre.fils.size();i++) {
 				RadixTree fil = arbre.fils.get(i);
 				if(estPrefix(mot,fil.chars)){
 					insertion(fil,mot.substring(fil.chars.length()));
-				}else {
-					RadixTree nouvelle = new RadixTree(mot);
-					arbre.fils.add(nouvelle);
+					prefixCommun = true;
 				}
+			}
+			if(!prefixCommun) {
+				RadixTree nouvelle = new RadixTree(mot);
+				arbre.fils.add(nouvelle);
 			}
 		}
 	}
@@ -124,7 +127,7 @@ public class Test {
 
 		return tree;
 	}
-	
+
 	public HashMap<String,Coordonnees> lireTexte(String nomFichier) {
 
 		HashMap<String,Coordonnees> mapIndex = new HashMap<String,Coordonnees>();
@@ -180,7 +183,7 @@ public class Test {
 		}
 		return mapIndex;
 	}
-	
+
 	public static void main(String[] args) {
 		Test t = new Test();
 
@@ -190,6 +193,14 @@ public class Test {
 			System.out.println(e.getKey()+e.getValue().toString());
 		}
 		RadixTree tree = t.construireTree(mapIndex);
+		
+		String motAChercher = "ok";
+		if(t.rechercher(tree,motAChercher )){
+		System.out.print(mapIndex.get(motAChercher).toString());
+		}else {
+			System.out.print("ce mot n'existe pas dans ce texte");
+		}
+		
 
 
 	}
