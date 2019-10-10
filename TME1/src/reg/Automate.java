@@ -106,7 +106,7 @@ public class Automate {
 					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape4[i][j]+"  ");
 				}
 
-		System.out.println(estReconnaissable("bcccc"));
+		System.out.println("\n"+estReconnaissable("Sagggrraaon"));
 
 
 	}
@@ -338,18 +338,21 @@ public class Automate {
 		int i = 0;
 		int a = mot.charAt(i);
 		int arrive = tab_trans_etape4[depart][a];
-		while(tab_final_etape4[arrive]==0) {
+		if(arrive ==-1) return false;
+		i++;
+		while(i<mot.length()) {
 
-			i++;
 			a = mot.charAt(i);
 			depart = arrive;
 			arrive = tab_trans_etape4[depart][a];
-			if(tab_final_etape4[arrive]!=0) return true;
+			if(arrive ==-1) return false;
+			i++;
+
 		}
+	
 
+		return (tab_final_etape4[arrive]!=0);
 
-
-		return false;
 
 	}
 
@@ -484,7 +487,9 @@ public class Automate {
 
 		if(root == RegEx.CONCAT) {
 
+			System.out.println("concat  = " + cpt );
 			int deuxieme = construireAutomateAvecEpsilon(tree.subTrees.get(0),cpt);
+			System.out.println("deuxieme"+ deuxieme);
 			tab_epsilon_etape2[deuxieme-1] [deuxieme] = 1 ;
 			tab_final_etape2[deuxieme-1] = 0;
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(1),deuxieme);
@@ -492,12 +497,16 @@ public class Automate {
 
 		} else if(root == RegEx.ALTERN ) {
 
+			System.out.println("ALTERN  = " + cpt );
+
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			int debut = cpt;
 			int premier = cpt + 1 ;
 			int fin = construireAutomateAvecEpsilon(tree.subTrees.get(0),premier);
 			int deuxieme = fin+1;
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(1),deuxieme);
+			System.out.println("ALTERN cpt fin = " + cpt );
+
 			tab_final_etape2[fin] = 1;
 			tab_init_etape2[debut] = 1 ;
 			tab_epsilon_etape2[debut][premier] = 1;
@@ -508,9 +517,10 @@ public class Automate {
 			tab_init_etape2[deuxieme] = 0 ;
 			tab_final_etape2[fin-1] = 0;
 			tab_final_etape2[cpt-1] = 0;
-			cpt++;
 
 		}else if(root == RegEx.ETOILE) {
+
+			System.out.println("ETOILE  = " + cpt );
 
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			tab_init_etape2[cpt] = 1;
@@ -518,6 +528,8 @@ public class Automate {
 			int cpt_debut = cpt;
 			tab_epsilon_etape2[cpt_debut-1] [cpt_debut] = 1;
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(0),cpt_debut);
+			System.out.println("ETOILE cpt fin = " + cpt );
+
 			tab_final_etape2[cpt-1] = 0;
 			tab_init_etape2[cpt_debut] = 0;
 			tab_epsilon_etape2[cpt-1][cpt_debut] = 1; 
@@ -527,6 +539,8 @@ public class Automate {
 			cpt++;
 
 		}else{/*root == RegEx.DOT*/
+			System.out.println("lettre  = " + cpt );
+
 			tab_trans_etape2[cpt][root] = cpt + 1;
 			tab_init_etape2[cpt] = 1;
 			tab_final_etape2[cpt+1] = 1;
