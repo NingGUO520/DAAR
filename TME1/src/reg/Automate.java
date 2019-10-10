@@ -3,7 +3,10 @@ package reg;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Map.Entry;
+
+
 import java.util.PriorityQueue;
 
 public class Automate {
@@ -12,6 +15,7 @@ public class Automate {
 	HashSet<Integer> caracteres;
 	int nombreEtatsEtape2;
 	int nombreEtatsEtape3;
+	int nombreEtatsEtape4;
 
 	/* Un tableau qui stocke les transitions dans etape2*/
 	int[][] tab_trans_etape2;
@@ -28,7 +32,12 @@ public class Automate {
 	int[] tab_init_etape3;
 	/* tableau qui stocke les etats finaux dans etape3 */
 	int[] tab_final_etape3;
-	//	int[][] tab_trans_etape3_inverse;
+
+
+	/* les tableaux d'etape4 */
+	int[][] tab_trans_etape4;
+	int[] tab_init_etape4;
+	int[] tab_final_etape4;
 
 	public Automate(RegExTree tree) {
 
@@ -62,34 +71,43 @@ public class Automate {
 		etape3();
 
 		/* debuger */
-		System.out.print( "tab init :");
-		for(int a :tab_init_etape3) 
-			System.out.print(a);
-		System.out.print( "\n tab_final :");
-		for(int a :tab_final_etape3) 
-			System.out.print(a);
-
-		System.out.print( "\n  tab_trans :");
-		for(int i =0; i<nombreEtatsEtape2;i++)
-			for(int j=0; j<256;j++)
-				if(tab_trans_etape3[i][j]!=-1) {
-					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape3[i][j]+"  ");
-				}
-
-		//Calculer le tableau inverse de transitions
-		//		for(int i = 0;i<nombreEtatsEtape2;i++) {
-		//			for(int j= 0;j<256;j++) {
+		//		System.out.print( "tab init  etape3:");
+		//		for(int a :tab_init_etape3) 
+		//			System.out.print(a);
+		//		System.out.print( "\n tab_final etape3 :");
+		//		for(int a :tab_final_etape3) 
+		//			System.out.print(a);
+		//
+		//		System.out.print( "\n  tab_trans etape3 :");
+		//		for(int i =0; i<nombreEtatsEtape2;i++)
+		//			for(int j=0; j<256;j++)
 		//				if(tab_trans_etape3[i][j]!=-1) {
-		//					int v = tab_trans_etape3[i][j];
-		//					tab_trans_etape3_inverse[v][j]=i;
+		//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape3[i][j]+"  ");
 		//				}
 		//
-		//			}
+		//
+		//		for(int a :caracteres) {
+		//			System.out.println("caractere = "+ a);
 		//		}
 
-		for(int a :caracteres) {
-			System.out.println("caractere = "+ a);
-		}
+		etape4();
+		/* debuger */
+		System.out.print( "tab init  etape4:");
+		for(int a :tab_init_etape4) 
+			System.out.print(a);
+		System.out.print( "\n tab_final etape4 :");
+		for(int a :tab_final_etape4) 
+			System.out.print(a);
+
+		System.out.print( "\n  tab_trans etape4 :");
+		for(int i =0; i<nombreEtatsEtape4;i++)
+			for(int j=0; j<256;j++)
+				if(tab_trans_etape4[i][j]!=-1) {
+					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape4[i][j]+"  ");
+				}
+
+		System.out.println(estReconnaissable("bcccc"));
+
 
 	}
 
@@ -188,60 +206,226 @@ public class Automate {
 
 
 	/**
-	 * Etape 4 : Minimisation d'un automate fini en utilisant Algorithme de Moore
-	 * transformer en un automate equivalent avec un nombre minimum d’etats
+	 * Etape 4 : Minimisation d'un automate fini 
 	 */
 	public void etape4() {
 
-		int nombreCaracteres = caracteres.size();
-		ArrayList<Integer> listCaractetres = new ArrayList<Integer>();
-		listCaractetres.addAll(caracteres);
+		ArrayList<HashSet<Integer>> ensembles = minimisation();
+		construireAutomateMinimal(ensembles);
 
-		// Un tableau qui represente une partition des etats
-		int[] P = new int[nombreEtatsEtape3];
+	}
+
+	/**
+	 * Minimisation d'un automate fini 
+	 */
+	public ArrayList<HashSet<Integer>> minimisation() {
+
+		//Ensemble des etats finaux
+		ArrayList<Integer> finaux = new ArrayList<Integer>();
+
+		//Ensemble des etats non finaux
+		ArrayList<Integer> nonFinal = new ArrayList<Integer>();
+
 		for(int i = 0; i<nombreEtatsEtape3;i++ ) {
 			if(tab_final_etape3[i]==1) {
-				P[i]=1;
+				finaux.add(i);
+			}else {
+				nonFinal.add(i);
 			}
 		}
 
-		//Deux états sont dans un même ensemble s'ils étaient déjà dans le même ensemble
-		//et si les transitions mènent dans les mêmes ensembles.
-		int numeroGroupe = 0;
-		int numeroMax = getMax(P);
-		int tableau[][] = new int[nombreEtatsEtape3][nombreCaracteres];
-		while(numeroGroupe<=numeroMax) {
-			for(int i = 0;i<nombreEtatsEtape3;i++) {
-				if(P[i] == numeroGroupe ) {
-					for(int c = 0; c <listCaractetres.size();c++) {
-						int a = listCaractetres.get(c); 
-						int arrive = tab_trans_etape3[i][a];
-						if(arrive!=-1) {
-							tableau[i][c] = P[arrive];
+
+		HashSet<Pair> P = new HashSet<Pair>();
+		//On represente une paire des etats par un tableau de taille 2
+		for(Integer f1:finaux) {
+			for(Integer f2:finaux) {
+				Pair pair = new Pair(f1,f2);
+
+				P.add(pair);
+			}
+		}
+
+		for(Integer nf1:nonFinal) {
+			for(Integer nf2:nonFinal) {
+				Pair pair = new Pair(nf1,nf2);
+
+				P.add(pair);
+			}
+		}
+
+		HashSet<Pair> Pprime = new HashSet<Pair>();
+		while(!P.equals(Pprime)) {
+			for(Pair couple: P) {
+				if(couple.p1==couple.p2) {
+					Pprime.add(couple);
+					//					System.out.println ("1 Prime add  "+ couple[0]+ " "+ couple[1] );
+
+				}else {
+
+					boolean ok = true;
+					for(int a: caracteres) {
+						int p1 = tab_trans_etape3[couple.p1][a];
+						int p2 = tab_trans_etape3[couple.p2][a];
+
+						if(p1==-1 && p2 == -1) continue;
+						Pair pair = new Pair(p1,p2);
+						if(!P.contains(pair)) {
+							ok= false;
 						}
 					}
-				}
-			}
 
-			numeroGroupe++;
-		}
+					if(ok) {
+						Pprime.add(couple);
+						//						System.out.println ("2 Prime add  "+ couple.p1+ " "+ couple.p2 );
 
-		//faire la repartition
-		numeroGroupe = 0;
-		while(numeroGroupe<=numeroMax) {
-			for(int i=0;i<nombreEtatsEtape3;i++ ) {
-				if(P[i]==numeroGroupe) {
-					for(int j=0;j<nombreCaracteres;j++) {
-						
+						Pair pair = new Pair(couple.p2, couple.p1);
+						Pprime.add(pair);
+						//						System.out.println ("3 Prime add  "+ pair.p1+ " "+ pair.p2 );
 
 					}
-
 				}
 			}
+			if(P.equals(Pprime)) break;
+			P =  (HashSet<Pair>) Pprime.clone();
+			Pprime = new HashSet<Pair>();
 
-
-			numeroGroupe++;
 		}
+		//		System.out.println (" P = ");
+		//		for(Pair c : P) {
+		//			System.out.print(c.p1+" "+c.p2+" | ");
+		//		}
+
+		//				System.out.println ("\n Prime = ");
+		//		
+		//				for(Pair c : Pprime) {
+		//					System.out.print(c.p1+" "+c.p2+" | ");
+		//				}
+		//				System.out.println ("\n Prime = "+Pprime.size());
+		//		
+
+		ArrayList<HashSet<Integer>> ensembles = new ArrayList<HashSet<Integer>>();
+		for(Pair pair : P) {
+
+			int index1 = chercherIndexDeEnsemble(pair.p1,ensembles);
+			int index2 = chercherIndexDeEnsemble(pair.p2,ensembles);
+			if(index1!=-1 ) {
+				ensembles.get(index1).add(pair.p2);
+			}else if(index2!=-1 ) {
+				ensembles.get(index2).add(pair.p1);
+			}else {
+
+				HashSet<Integer> ensemble = new HashSet<Integer>();
+				ensemble.add(pair.p1);
+				ensemble.add(pair.p2);
+				ensembles.add(ensemble);
+			}
+		}
+		return ensembles;
+
+	}
+
+
+	public boolean estReconnaissable(String mot) {
+
+		int intial =-1;
+		for(int i=0;i<tab_init_etape4.length;i++) {
+			if(tab_init_etape4[i]!=0) intial = i;
+		}
+
+
+
+		int depart = intial;
+		int i = 0;
+		int a = mot.charAt(i);
+		int arrive = tab_trans_etape4[depart][a];
+		while(tab_final_etape4[arrive]==0) {
+
+			i++;
+			a = mot.charAt(i);
+			depart = arrive;
+			arrive = tab_trans_etape4[depart][a];
+			if(tab_final_etape4[arrive]!=0) return true;
+		}
+
+
+
+		return false;
+
+	}
+
+	public void construireAutomateMinimal(ArrayList<HashSet<Integer>> ensembles) {
+		/*debuger*/
+		//		System.out.println("partition : ");
+		//		for(HashSet<Integer> ens : ensembles) {
+		//			for(int i : ens) {
+		//				System.out.print(i+" ");
+		//			}
+		//			System.out.println("fin");
+		//		}
+
+		nombreEtatsEtape4 = ensembles.size();
+		tab_trans_etape4  = new int[nombreEtatsEtape4][256];
+		tab_init_etape4 = new int[nombreEtatsEtape4];
+		tab_final_etape4  = new int[nombreEtatsEtape4];
+
+		//		Initialiser le tableau de transition a -1
+		for(int i = 0;i<nombreEtatsEtape4;i++) {
+			for(int j= 0;j<256;j++) {
+				tab_trans_etape4[i][j]=-1;
+			}
+		}
+
+		HashMap<Integer,ArrayList<Integer>> renommage = new HashMap<Integer,ArrayList<Integer>>();
+
+		for(int i =0; i<nombreEtatsEtape2;i++)
+			for(int j=0; j<256;j++)
+				if(tab_trans_etape3[i][j]!=-1) {
+					int arrive =  tab_trans_etape3[i][j];
+					int indexDepart = chercherIndexDeEnsemble(i,  ensembles);
+					int indexArrive = chercherIndexDeEnsemble(arrive,  ensembles);
+					tab_trans_etape4[indexDepart][j]=indexArrive;
+				}
+
+		for(int i=0;i<tab_init_etape3.length;i++) {
+			if(tab_init_etape3[i]!=0) {
+				int index = chercherIndexDeEnsemble(i,  ensembles);
+				tab_init_etape4[index]=1;
+			}
+		}
+
+		for(int i=0;i<tab_final_etape3.length;i++) {
+			if(tab_final_etape3[i]!=0) {
+				int index = chercherIndexDeEnsemble(i,  ensembles);
+				tab_final_etape4[index]=1;
+			}
+		}
+
+
+
+
+	}
+
+	public int chercherIndexDeEnsemble(int target, ArrayList<HashSet<Integer>> ensembles) {
+		for(int i= 0; i<ensembles.size();i++) {
+			HashSet<Integer> ens = ensembles.get(i);
+			if(ens.contains(target)) return i;
+		}
+
+		return -1;
+	}
+
+	/**
+	 * @param numGroupe : le numero de groupe
+	 * @return un ensemble des etats dans ce groupe
+	 */
+	public ArrayList<Integer> getEtatsDeGroupe(int numGroupe, int[] P){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for(int i = 0; i<P.length;i++) {
+			if(P[i]==numGroupe) {
+				result.add(i);
+			}
+		}
+		return result;
 	}
 
 	public int getMax(int[] tab) {
@@ -392,6 +576,28 @@ public class Automate {
 		}
 		return null;
 	}
+
+	public class Pair {
+		int p1;
+		int p2;
+		public Pair(int p1, int p2) {
+			this.p1 = p1;
+			this.p2 = p2;
+		}
+		@Override
+		public int hashCode() {
+			return Objects.hash(p1,p2);
+		}
+		@Override
+		public boolean equals(Object obj) 
+		{
+			Pair pair = (Pair)obj;
+			if(this.p1 == pair.p1 && this.p2 == pair.p2) return true;
+			return false;
+
+		}
+	}
+
 
 }
 
