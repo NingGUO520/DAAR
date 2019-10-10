@@ -40,17 +40,22 @@ public class RegEx {
       System.out.print("  >> ASCII codes: ["+(int)regEx.charAt(0));
       for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
       System.out.println("].");
+      
+      
+      
+      RegExTree ret = null;
       try {
-        RegExTree ret = parse();
+         ret = parse();
         
         
-        Automate automate = new Automate(ret);
         
         
         System.out.println("  >> Tree result: "+ret.toString()+".");
       } catch (Exception e) {
         System.err.println("  >> ERROR: syntax error for regEx \""+regEx+"\".");
       }
+      Automate automate = new Automate(ret);
+
     }
 
     System.out.println("  >> ...");
