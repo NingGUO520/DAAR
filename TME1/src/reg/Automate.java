@@ -59,36 +59,34 @@ public class Automate {
 		etape2(tree);
 
 		tab_trans_etape3 = new int[nombreEtatsEtape2][256];
-		//		tab_trans_etape3_inverse = new int[nombreEtatsEtape2][256];
 
 		//		Initialiser le tableau de transition a -1
 		for(int i = 0;i<nombreEtatsEtape2;i++) {
 			for(int j= 0;j<256;j++) {
 				tab_trans_etape3[i][j]=-1;
-				//				tab_trans_etape3_inverse[i][j]=-1;
 			}
 		}
 		etape3();
 
 		/* debuger */
-		//		System.out.print( "tab init  etape3:");
-		//		for(int a :tab_init_etape3) 
-		//			System.out.print(a);
-		//		System.out.print( "\n tab_final etape3 :");
-		//		for(int a :tab_final_etape3) 
-		//			System.out.print(a);
-		//
-		//		System.out.print( "\n  tab_trans etape3 :");
-		//		for(int i =0; i<nombreEtatsEtape2;i++)
-		//			for(int j=0; j<256;j++)
-		//				if(tab_trans_etape3[i][j]!=-1) {
-		//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape3[i][j]+"  ");
-		//				}
-		//
-		//
-		//		for(int a :caracteres) {
-		//			System.out.println("caractere = "+ a);
-		//		}
+//		System.out.print( "\n tab init  etape3:");
+//		for(int a :tab_init_etape3) 
+//			System.out.print(a);
+//		System.out.print( "\n tab_final etape3 :");
+//		for(int a :tab_final_etape3) 
+//			System.out.print(a);
+//
+//		System.out.print( "\n  tab_trans etape3 :");
+//		for(int i =0; i<nombreEtatsEtape2;i++)
+//			for(int j=0; j<256;j++)
+//				if(tab_trans_etape3[i][j]!=-1) {
+//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape3[i][j]+"  ");
+//				}
+//
+//
+//		for(int a :caracteres) {
+//			System.out.println("caractere = "+ a);
+//		}
 
 		etape4();
 		/* debuger */
@@ -106,7 +104,7 @@ public class Automate {
 					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape4[i][j]+"  ");
 				}
 
-		System.out.println("\n"+estReconnaissable("Sagggrraaon"));
+		System.out.println("\n"+estReconnaissable("Srgaaaaarrrrgggggon"));
 
 
 	}
@@ -121,26 +119,26 @@ public class Automate {
 		int cpt = 0; // compteur pour le numero de l'etat
 		cpt = construireAutomateAvecEpsilon(tree,cpt);
 		//		/* debuger */
-		//		System.out.print( "tab init :");
-		//		for(int a :tab_init_etape2) 
-		//			System.out.print(a);
-		//		System.out.print( "\n tab_final :");
-		//
-		//		for(int a :tab_final_etape2) 
-		//			System.out.print(a);
-		//		System.out.print( "\n  tab_epsilon :");
-		//		for(int i =0;i<nombreEtatsEtape2;i++) {
-		//			for(int j=0;j<nombreEtatsEtape2; j++) {
-		//				if(tab_epsilon_etape2[i][j]==1)
-		//					System.out.print("["+ i+ "]["+ j + "]= "+ tab_epsilon_etape2[i][j]+"  ");
-		//			}
-		//		}
-		//		System.out.print( "\n  tab_trans :");
-		//		for(int i =0; i<nombreEtatsEtape2;i++)
-		//			for(int j=0; j<256;j++)
-		//				if(tab_trans_etape2[i][j]!=-1) {
-		//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape2[i][j]+"  ");
-		//				}
+		System.out.print( "tab init etape2 :");
+		for(int a :tab_init_etape2) 
+			System.out.print(a);
+		System.out.print( "\n tab_final etape2:");
+
+		for(int a :tab_final_etape2) 
+			System.out.print(a);
+		System.out.print( "\n  tab_epsilon etape2:");
+		for(int i =0;i<nombreEtatsEtape2;i++) {
+			for(int j=0;j<nombreEtatsEtape2; j++) {
+				if(tab_epsilon_etape2[i][j]==1)
+					System.out.print("["+ i+ "]["+ j + "]= "+ tab_epsilon_etape2[i][j]+"  ");
+			}
+		}
+		System.out.print( "\n  tab_trans etape2:");
+		for(int i =0; i<nombreEtatsEtape2;i++)
+			for(int j=0; j<256;j++)
+				if(tab_trans_etape2[i][j]!=-1) {
+					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape2[i][j]+"  ");
+				}
 	}
 
 	/**
@@ -349,7 +347,7 @@ public class Automate {
 			i++;
 
 		}
-	
+
 
 		return (tab_final_etape4[arrive]!=0);
 
@@ -502,21 +500,22 @@ public class Automate {
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			int debut = cpt;
 			int premier = cpt + 1 ;
-			int fin = construireAutomateAvecEpsilon(tree.subTrees.get(0),premier);
-			int deuxieme = fin+1;
+			int deuxieme = construireAutomateAvecEpsilon(tree.subTrees.get(0),premier);
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(1),deuxieme);
 			System.out.println("ALTERN cpt fin = " + cpt );
 
-			tab_final_etape2[fin] = 1;
+			tab_final_etape2[cpt] = 1;
 			tab_init_etape2[debut] = 1 ;
+			
 			tab_epsilon_etape2[debut][premier] = 1;
 			tab_epsilon_etape2[debut][deuxieme] = 1;
-			tab_epsilon_etape2[fin-1][fin] = 1;
-			tab_epsilon_etape2[cpt-1][fin] = 1;
+			tab_epsilon_etape2[deuxieme-1][cpt] = 1;
+			tab_epsilon_etape2[cpt-1][cpt] = 1;
 			tab_init_etape2[premier] = 0 ;
 			tab_init_etape2[deuxieme] = 0 ;
-			tab_final_etape2[fin-1] = 0;
+			tab_final_etape2[deuxieme-1] = 0;
 			tab_final_etape2[cpt-1] = 0;
+			cpt++;
 
 		}else if(root == RegEx.ETOILE) {
 
