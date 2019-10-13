@@ -1,5 +1,8 @@
 package reg;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +16,7 @@ public class Automate {
 
 
 	HashSet<Integer> caracteres;
+	static final int MAXLENGTH = 9000;
 	int nombreEtatsEtape2;
 	int nombreEtatsEtape3;
 	int nombreEtatsEtape4;
@@ -28,16 +32,17 @@ public class Automate {
 
 	/* Un tableau qui stocke les transitions dans etape3 */
 	int[][] tab_trans_etape3;
-	/* tableau qui stocke les etats initiaux dans etape3 */
-	int[] tab_init_etape3;
+	/*Etat initial*/
+	int init_etape3;
 	/* tableau qui stocke les etats finaux dans etape3 */
 	int[] tab_final_etape3;
 
 
 	/* les tableaux d'etape4 */
 	int[][] tab_trans_etape4;
-	int[] tab_init_etape4;
 	int[] tab_final_etape4;
+	/*Etat initial*/
+	int init_etape4;
 
 	public Automate(RegExTree tree) {
 
@@ -47,10 +52,10 @@ public class Automate {
 		System.out.println("nombre de caractere "+caracteres.size());
 
 
-		tab_trans_etape2 = new int[nombreEtatsEtape2][256];
+		tab_trans_etape2 = new int[nombreEtatsEtape2][MAXLENGTH];
 		//		Initialiser le tableau de transition a -1
 		for(int i = 0;i<nombreEtatsEtape2;i++)
-			for(int j= 0;j<256;j++)
+			for(int j= 0;j<MAXLENGTH;j++)
 				tab_trans_etape2[i][j]=-1;
 
 		tab_init_etape2 = new int[nombreEtatsEtape2];
@@ -58,56 +63,29 @@ public class Automate {
 		tab_epsilon_etape2 = new int[nombreEtatsEtape2][nombreEtatsEtape2];
 		etape2(tree);
 
-		tab_trans_etape3 = new int[nombreEtatsEtape2][256];
+		tab_trans_etape3 = new int[nombreEtatsEtape2][MAXLENGTH];
 
 		//		Initialiser le tableau de transition a -1
 		for(int i = 0;i<nombreEtatsEtape2;i++) {
-			for(int j= 0;j<256;j++) {
+			for(int j= 0;j<MAXLENGTH;j++) {
 				tab_trans_etape3[i][j]=-1;
 			}
 		}
 		etape3();
 
-		/* debuger */
-//		System.out.print( "\n tab init  etape3:");
-//		for(int a :tab_init_etape3) 
-//			System.out.print(a);
-//		System.out.print( "\n tab_final etape3 :");
-//		for(int a :tab_final_etape3) 
-//			System.out.print(a);
-//
-//		System.out.print( "\n  tab_trans etape3 :");
-//		for(int i =0; i<nombreEtatsEtape2;i++)
-//			for(int j=0; j<256;j++)
-//				if(tab_trans_etape3[i][j]!=-1) {
-//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape3[i][j]+"  ");
-//				}
-//
-//
-//		for(int a :caracteres) {
-//			System.out.println("caractere = "+ a);
-//		}
-
 		etape4();
 		/* debuger */
-		System.out.print( "tab init  etape4:");
-		for(int a :tab_init_etape4) 
-			System.out.print(a);
-		System.out.print( "\n tab_final etape4 :");
-		for(int a :tab_final_etape4) 
-			System.out.print(a);
-
-		System.out.print( "\n  tab_trans etape4 :");
-		for(int i =0; i<nombreEtatsEtape4;i++)
-			for(int j=0; j<256;j++)
-				if(tab_trans_etape4[i][j]!=-1) {
-					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape4[i][j]+"  ");
-				}
-
-		System.out.println("\n"+estReconnaissable("Srgaaaaarrrrgggggon"));
-
+		printAutomate();
+//		for(int a:caracteres) {
+//			System.out.print(a+"  ");
+//		}
+		
+		
+//		System.out.println(rechercher("casfaSaonfas"));
 
 	}
+
+
 
 	/**
 	 * Etape 2 :
@@ -119,32 +97,32 @@ public class Automate {
 		int cpt = 0; // compteur pour le numero de l'etat
 		cpt = construireAutomateAvecEpsilon(tree,cpt);
 		//		/* debuger */
-		System.out.print( "tab init etape2 :");
-		for(int a :tab_init_etape2) 
-			System.out.print(a);
-		System.out.print( "\n tab_final etape2:");
-
-		for(int a :tab_final_etape2) 
-			System.out.print(a);
-		System.out.print( "\n  tab_epsilon etape2:");
-		for(int i =0;i<nombreEtatsEtape2;i++) {
-			for(int j=0;j<nombreEtatsEtape2; j++) {
-				if(tab_epsilon_etape2[i][j]==1)
-					System.out.print("["+ i+ "]["+ j + "]= "+ tab_epsilon_etape2[i][j]+"  ");
-			}
-		}
-		System.out.print( "\n  tab_trans etape2:");
-		for(int i =0; i<nombreEtatsEtape2;i++)
-			for(int j=0; j<256;j++)
-				if(tab_trans_etape2[i][j]!=-1) {
-					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape2[i][j]+"  ");
-				}
+		//		System.out.print( "tab init etape2 :");
+		//		for(int a :tab_init_etape2) 
+		//			System.out.print(a);
+		//		System.out.print( "\n tab_final etape2:");
+		//
+		//		for(int a :tab_final_etape2) 
+		//			System.out.print(a);
+		//		System.out.print( "\n  tab_epsilon etape2:");
+		//		for(int i =0;i<nombreEtatsEtape2;i++) {
+		//			for(int j=0;j<nombreEtatsEtape2; j++) {
+		//				if(tab_epsilon_etape2[i][j]==1)
+		//					System.out.print("["+ i+ "]["+ j + "]= "+ tab_epsilon_etape2[i][j]+"  ");
+		//			}
+		//		}
+		//		System.out.print( "\n  tab_trans etape2:");
+		//		for(int i =0; i<nombreEtatsEtape2;i++)
+		//			for(int j=0; j<256;j++)
+		//				if(tab_trans_etape2[i][j]!=-1) {
+		//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape2[i][j]+"  ");
+		//				}
 	}
 
 	/**
 	 * Etape 3 :
 	 * transformer en un automate fini deterministe avec la methode des sous-ensembles
-	 * automate déterministe (DFA)
+	 * automate fini déterministe (DFA)
 	 */
 	public void etape3() {
 
@@ -188,9 +166,8 @@ public class Automate {
 			}
 		}
 		nombreEtatsEtape3 = renommage.size();
-		tab_init_etape3 = new int[nombreEtatsEtape3];
 		tab_final_etape3 = new int[nombreEtatsEtape3];
-		tab_init_etape3[0]=1;
+		init_etape3=0;
 		//remplir le tableau de etats finaux
 		for(Entry<Integer,ArrayList<Integer>> entry : renommage.entrySet()) {
 			int key = entry.getKey();
@@ -204,7 +181,7 @@ public class Automate {
 
 
 	/**
-	 * Etape 4 : Minimisation d'un automate fini 
+	 * Etape 4 : Minimisation d'un automate fini deterministe
 	 */
 	public void etape4() {
 
@@ -323,35 +300,39 @@ public class Automate {
 	}
 
 
-	public boolean estReconnaissable(String mot) {
+	public boolean rechercher(String texte) {
+		//fdvscsadaaaaaab
+		//si c'est un mot vide 
 
-		int intial =-1;
-		for(int i=0;i<tab_init_etape4.length;i++) {
-			if(tab_init_etape4[i]!=0) intial = i;
+		if(texte.length()==0) {
+			return false;
 		}
-
-
-
-		int depart = intial;
+		int etatCourant = init_etape4;
 		int i = 0;
-		int a = mot.charAt(i);
-		int arrive = tab_trans_etape4[depart][a];
-		if(arrive ==-1) return false;
-		i++;
-		while(i<mot.length()) {
-
-			a = mot.charAt(i);
-			depart = arrive;
-			arrive = tab_trans_etape4[depart][a];
-			if(arrive ==-1) return false;
-			i++;
-
+		int a = texte.charAt(i);
+//		System.out.println("a "+a);
+//
+//		System.out.println("etatCourant "+etatCourant);
+		if(tab_trans_etape4[etatCourant][a]!=-1) {
+			while(tab_trans_etape4[etatCourant][a]!=-1 && i<texte.length()) {
+				etatCourant = tab_trans_etape4[etatCourant][a];
+				i++;
+				if(i>=texte.length()) break;
+				a = texte.charAt(i);
+			}
+			if(tab_final_etape4[etatCourant]==1) {
+				return true;
+			}else {
+				return rechercher(texte.substring(i));
+			}
+		}else {
+			while(tab_trans_etape4[etatCourant][a]==-1 && i<texte.length()) {
+				i++;
+				if(i>=texte.length()) break;
+				a = texte.charAt(i);
+			}
+			return rechercher(texte.substring(i));
 		}
-
-
-		return (tab_final_etape4[arrive]!=0);
-
-
 	}
 
 	public void construireAutomateMinimal(ArrayList<HashSet<Integer>> ensembles) {
@@ -365,13 +346,12 @@ public class Automate {
 		//		}
 
 		nombreEtatsEtape4 = ensembles.size();
-		tab_trans_etape4  = new int[nombreEtatsEtape4][256];
-		tab_init_etape4 = new int[nombreEtatsEtape4];
+		tab_trans_etape4  = new int[nombreEtatsEtape4][MAXLENGTH];
 		tab_final_etape4  = new int[nombreEtatsEtape4];
 
 		//		Initialiser le tableau de transition a -1
 		for(int i = 0;i<nombreEtatsEtape4;i++) {
-			for(int j= 0;j<256;j++) {
+			for(int j= 0;j<MAXLENGTH;j++) {
 				tab_trans_etape4[i][j]=-1;
 			}
 		}
@@ -379,7 +359,7 @@ public class Automate {
 		HashMap<Integer,ArrayList<Integer>> renommage = new HashMap<Integer,ArrayList<Integer>>();
 
 		for(int i =0; i<nombreEtatsEtape2;i++)
-			for(int j=0; j<256;j++)
+			for(int j=0; j<MAXLENGTH;j++)
 				if(tab_trans_etape3[i][j]!=-1) {
 					int arrive =  tab_trans_etape3[i][j];
 					int indexDepart = chercherIndexDeEnsemble(i,  ensembles);
@@ -387,12 +367,7 @@ public class Automate {
 					tab_trans_etape4[indexDepart][j]=indexArrive;
 				}
 
-		for(int i=0;i<tab_init_etape3.length;i++) {
-			if(tab_init_etape3[i]!=0) {
-				int index = chercherIndexDeEnsemble(i,  ensembles);
-				tab_init_etape4[index]=1;
-			}
-		}
+		init_etape4 = chercherIndexDeEnsemble(init_etape3,  ensembles);
 
 		for(int i=0;i<tab_final_etape3.length;i++) {
 			if(tab_final_etape3[i]!=0) {
@@ -485,9 +460,9 @@ public class Automate {
 
 		if(root == RegEx.CONCAT) {
 
-			System.out.println("concat  = " + cpt );
+			//			System.out.println("concat  = " + cpt );
 			int deuxieme = construireAutomateAvecEpsilon(tree.subTrees.get(0),cpt);
-			System.out.println("deuxieme"+ deuxieme);
+			//			System.out.println("deuxieme"+ deuxieme);
 			tab_epsilon_etape2[deuxieme-1] [deuxieme] = 1 ;
 			tab_final_etape2[deuxieme-1] = 0;
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(1),deuxieme);
@@ -495,18 +470,17 @@ public class Automate {
 
 		} else if(root == RegEx.ALTERN ) {
 
-			System.out.println("ALTERN  = " + cpt );
+//			System.out.println("ALTERN  = " + cpt );
 
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			int debut = cpt;
 			int premier = cpt + 1 ;
 			int deuxieme = construireAutomateAvecEpsilon(tree.subTrees.get(0),premier);
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(1),deuxieme);
-			System.out.println("ALTERN cpt fin = " + cpt );
 
 			tab_final_etape2[cpt] = 1;
 			tab_init_etape2[debut] = 1 ;
-			
+
 			tab_epsilon_etape2[debut][premier] = 1;
 			tab_epsilon_etape2[debut][deuxieme] = 1;
 			tab_epsilon_etape2[deuxieme-1][cpt] = 1;
@@ -519,7 +493,7 @@ public class Automate {
 
 		}else if(root == RegEx.ETOILE) {
 
-			System.out.println("ETOILE  = " + cpt );
+			//			System.out.println("ETOILE  = " + cpt );
 
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			tab_init_etape2[cpt] = 1;
@@ -527,7 +501,6 @@ public class Automate {
 			int cpt_debut = cpt;
 			tab_epsilon_etape2[cpt_debut-1] [cpt_debut] = 1;
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(0),cpt_debut);
-			System.out.println("ETOILE cpt fin = " + cpt );
 
 			tab_final_etape2[cpt-1] = 0;
 			tab_init_etape2[cpt_debut] = 0;
@@ -538,7 +511,7 @@ public class Automate {
 			cpt++;
 
 		}else{/*root == RegEx.DOT*/
-			System.out.println("lettre  = " + cpt );
+			//			System.out.println("lettre  = " + cpt );
 
 			tab_trans_etape2[cpt][root] = cpt + 1;
 			tab_init_etape2[cpt] = 1;
@@ -612,5 +585,80 @@ public class Automate {
 	}
 
 
+	public void printAutomate() {
+		System.out.println( "\n etat initial  etape3:"+init_etape3);
+		System.out.print( "\n tab_final etape3 :");
+		for(int a :tab_final_etape3) 
+			System.out.print(a);
+
+		System.out.print( "\n  tab_trans etape3 :");
+		for(int i =0; i<nombreEtatsEtape2;i++)
+			for(int j=0; j<MAXLENGTH;j++)
+				if(tab_trans_etape3[i][j]!=-1) {
+					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape3[i][j]+"  ");
+				}
+
+		System.out.println("nombreEtatsEtape3 : "+nombreEtatsEtape3);
+
+
+		for(int a :caracteres) {
+			System.out.println("caractere = "+ a);
+		}
+
+		System.out.println( "etat init  etape4:"+init_etape4);
+		System.out.print( "\n tab_final etape4 :");
+		for(int a :tab_final_etape4) 
+			System.out.print(a);
+
+		System.out.print( "\n  tab_trans etape4 :");
+		for(int i =0; i<nombreEtatsEtape4;i++)
+			for(int j=0; j<MAXLENGTH;j++)
+				if(tab_trans_etape4[i][j]!=-1) {
+					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape4[i][j]+"  ");
+				}
+		
+		System.out.println("nombreEtatsEtape4 : "+nombreEtatsEtape4);
+	}
+	
+	
+	public void lireTexte(String nomFichier) {
+
+		ArrayList<String> results = new ArrayList<String>();
+		String ligne;
+		BufferedReader reader;
+
+		try {
+			reader = new BufferedReader(new FileReader(nomFichier));
+			String premierligne = reader.readLine();
+			if(premierligne!=null) 
+				if(rechercher(premierligne.substring(1))) 
+					results.add(premierligne);
+
+				
+			
+			
+			while ((ligne = reader.readLine()) != null) {
+			
+////				
+//				for(int i = 0;i<ligne.length();i++) {
+//					if((int)ligne.charAt(i)>7000)
+//					System.out.println(" char i = "+ i + " is "+ ligne.charAt(i) +" ascci = "+ (int)ligne.charAt(i) );
+//				}
+//				
+				if(rechercher(ligne)) {
+					results.add(ligne);
+
+				}
+			}
+			reader.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		System.out.println("size of results = "+results.size());
+		for(String result: results) {
+			System.out.println(result);
+		}
+	}
 }
 
