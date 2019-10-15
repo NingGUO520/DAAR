@@ -81,37 +81,41 @@ public class Betweeness {
 
 		return aretes;
 	}
-
-	//	public HashMap<Pair, ArrayList<Integer>> calculShortestPaths(ArrayList<Pair> aretes, int size) {
-	//		HashMap<Pair, ArrayList<Integer>> chemins = new HashMap<Pair, ArrayList<Integer>>();
-	//		for (int i=0;i<paths.length;i++) for (int j=0;j<paths.length;j++) paths[i][j]=j;
-	//
-	//		//	    matrice d'adjacence
-	//		HashMap<Pair, Integer> matrice = new HashMap<Pair,Integer>();
-	//	
-	//		for(Pair pair : aretes) {
-	//			matrice.
-	//		}
-	//		
-	//		
-	//		for(int k = 0 ; k< points.size();k++) {
-	//			for(int i = 0 ; i< points.size();i++) {
-	//				for(int j = 0 ; j< points.size();j++) {
-	//					if(m[i][j]> m[i][k]+m[k][j]) {
-	//						m[i][j]= m[i][k]+m[k][j];
-	//						paths[i][j]=paths[i][k];
-	//					}    	    	  	    	    	    	
-	//				}    	           	        	
-	//			}
-	//		}
-	//		return chemins;
-	//	}
+	
+	
+	 public int[][] calculShortestPaths(int size, int edgeThreshold) {
+		    int[][] paths=new int[size][size];
+		    for (int i=0;i<paths.length;i++) for (int j=0;j<paths.length;j++) paths[i][j]=j;
+		    
+		    
+//		    matrice d'adjacence
+		    double[][] m = new double[size][size];
+		    for(int i =0;i<size;i++) {
+		    	
+		    	for (int j=0;j<size;j++) {
+		    		
+		    		
+		    		double d = points.get(i).distance(points.get(j));
+		    		if(d<edgeThreshold) {
+		    			
+		    			
+		    			m[i][j] = d;
+		    		}else {
+		    			  			
+		    			m[i][j]= Double.MAX_VALUE;
+		    			
+		    		}
+		    		
+		    	}
+		    	    	
+		    }
+		    
+		
 	public static void main(String[] args)  {
 
 		Betweeness b = new Betweeness();
 		String fileName = "./rollernet.dyn.gz";
 		List<Pair> aretes =  b.lireFile(fileName);
-		System.out.println("nombre de aretes" + aretes.size());
 	
 		ArrayList<Pair> liens = new ArrayList<Pair>();
 		for(Pair pair: aretes) {
