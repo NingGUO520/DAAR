@@ -1,4 +1,4 @@
-package reg;
+package automate;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -44,12 +44,13 @@ public class Automate {
 	/*Etat initial*/
 	int init_etape4;
 
+
 	public Automate(RegExTree tree) {
 
 		caracteres = new HashSet<Integer>();
 		nombreEtatsEtape2 = getNbEtatsWithEpsilon(tree);
-		System.out.println("nombre d'etats total dans un automate avec ε-transitions "+nombreEtatsEtape2);
-		System.out.println("nombre de caractere "+caracteres.size());
+		//		System.out.println("nombre d'etats total dans un automate avec ε-transitions "+nombreEtatsEtape2);
+		//		System.out.println("nombre de caractere "+caracteres.size());
 
 
 		tab_trans_etape2 = new int[nombreEtatsEtape2][MAXLENGTH];
@@ -75,13 +76,13 @@ public class Automate {
 
 		etape4();
 		/* debuger */
-		printAutomate();
-//		for(int a:caracteres) {
-//			System.out.print(a+"  ");
-//		}
-		
-		
-//		System.out.println(rechercher("casfaSaonfas"));
+		//		printAutomate();
+		//		for(int a:caracteres) {
+		//			System.out.print(a+"  ");
+		//		}
+
+
+		//		System.out.println(rechercher("casfaSaonfas"));
 
 	}
 
@@ -97,26 +98,26 @@ public class Automate {
 		int cpt = 0; // compteur pour le numero de l'etat
 		cpt = construireAutomateAvecEpsilon(tree,cpt);
 		//		/* debuger */
-		//		System.out.print( "tab init etape2 :");
-		//		for(int a :tab_init_etape2) 
-		//			System.out.print(a);
-		//		System.out.print( "\n tab_final etape2:");
-		//
-		//		for(int a :tab_final_etape2) 
-		//			System.out.print(a);
-		//		System.out.print( "\n  tab_epsilon etape2:");
-		//		for(int i =0;i<nombreEtatsEtape2;i++) {
-		//			for(int j=0;j<nombreEtatsEtape2; j++) {
-		//				if(tab_epsilon_etape2[i][j]==1)
-		//					System.out.print("["+ i+ "]["+ j + "]= "+ tab_epsilon_etape2[i][j]+"  ");
-		//			}
-		//		}
-		//		System.out.print( "\n  tab_trans etape2:");
-		//		for(int i =0; i<nombreEtatsEtape2;i++)
-		//			for(int j=0; j<256;j++)
-		//				if(tab_trans_etape2[i][j]!=-1) {
-		//					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape2[i][j]+"  ");
+		//				System.out.print( "tab init etape2 :");
+		//				for(int a :tab_init_etape2) 
+		//					System.out.print(a);
+		//				System.out.print( "\n tab_final etape2:");
+		//		
+		//				for(int a :tab_final_etape2) 
+		//					System.out.print(a);
+		//				System.out.print( "\n  tab_epsilon etape2:");
+		//				for(int i =0;i<nombreEtatsEtape2;i++) {
+		//					for(int j=0;j<nombreEtatsEtape2; j++) {
+		//						if(tab_epsilon_etape2[i][j]==1)
+		//							System.out.print("["+ i+ "]["+ j + "]= "+ tab_epsilon_etape2[i][j]+"  ");
+		//					}
 		//				}
+		//				System.out.print( "\n  tab_trans etape2:");
+		//				for(int i =0; i<nombreEtatsEtape2;i++)
+		//					for(int j=0; j<MAXLENGTH;j++)
+		//						if(tab_trans_etape2[i][j]!=-1) {
+		//							System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape2[i][j]+"  ");
+		//						}
 	}
 
 	/**
@@ -166,6 +167,7 @@ public class Automate {
 			}
 		}
 		nombreEtatsEtape3 = renommage.size();
+		//		System.out.println("renommage.size() = " + renommage.size());
 		tab_final_etape3 = new int[nombreEtatsEtape3];
 		init_etape3=0;
 		//remplir le tableau de etats finaux
@@ -310,12 +312,17 @@ public class Automate {
 		int etatCourant = init_etape4;
 		int i = 0;
 		int a = texte.charAt(i);
-//		System.out.println("a "+a);
-//
-//		System.out.println("etatCourant "+etatCourant);
-		if(tab_trans_etape4[etatCourant][a]!=-1) {
-			while(tab_trans_etape4[etatCourant][a]!=-1 && i<texte.length()) {
-				etatCourant = tab_trans_etape4[etatCourant][a];
+		//		System.out.println("a "+a);
+		//
+		//		System.out.println("etatCourant "+etatCourant);
+		if(tab_trans_etape4[etatCourant][a]!=-1 || tab_trans_etape4[etatCourant][RegEx.DOT]!=-1 ) {
+			while(tab_trans_etape4[etatCourant][a]!=-1 || tab_trans_etape4[etatCourant][RegEx.DOT]!=-1) {
+				if(tab_trans_etape4[etatCourant][a]!=-1 ) {
+					etatCourant = tab_trans_etape4[etatCourant][a];
+				}else if(tab_trans_etape4[etatCourant][RegEx.DOT]!=-1) {
+					etatCourant = tab_trans_etape4[etatCourant][RegEx.DOT];
+				}
+
 				i++;
 				if(i>=texte.length()) break;
 				a = texte.charAt(i);
@@ -326,7 +333,7 @@ public class Automate {
 				return rechercher(texte.substring(i));
 			}
 		}else {
-			while(tab_trans_etape4[etatCourant][a]==-1 && i<texte.length()) {
+			while(tab_trans_etape4[etatCourant][a]==-1 && tab_trans_etape4[etatCourant][RegEx.DOT]==-1 && i<texte.length()) {
 				i++;
 				if(i>=texte.length()) break;
 				a = texte.charAt(i);
@@ -460,17 +467,13 @@ public class Automate {
 
 		if(root == RegEx.CONCAT) {
 
-			//			System.out.println("concat  = " + cpt );
 			int deuxieme = construireAutomateAvecEpsilon(tree.subTrees.get(0),cpt);
-			//			System.out.println("deuxieme"+ deuxieme);
 			tab_epsilon_etape2[deuxieme-1] [deuxieme] = 1 ;
 			tab_final_etape2[deuxieme-1] = 0;
 			cpt = construireAutomateAvecEpsilon(tree.subTrees.get(1),deuxieme);
 			tab_init_etape2[deuxieme] = 0;
 
 		} else if(root == RegEx.ALTERN ) {
-
-//			System.out.println("ALTERN  = " + cpt );
 
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			int debut = cpt;
@@ -493,8 +496,6 @@ public class Automate {
 
 		}else if(root == RegEx.ETOILE) {
 
-			//			System.out.println("ETOILE  = " + cpt );
-
 			/*On ajoute 4 ε-transitions total, et on augmente le compteur de 2*/
 			tab_init_etape2[cpt] = 1;
 			cpt++;
@@ -510,7 +511,18 @@ public class Automate {
 			tab_final_etape2[cpt] = 1;
 			cpt++;
 
-		}else{/*root == RegEx.DOT*/
+		}
+		else if(root == RegEx.DOT) {
+
+			tab_trans_etape2[cpt][RegEx.DOT] = cpt + 1;
+			tab_init_etape2[cpt] = 1;
+			tab_final_etape2[cpt+1] = 1;
+			cpt = cpt+2;
+		}
+
+
+
+		else{/*root == RegEx.DOT*/
 			//			System.out.println("lettre  = " + cpt );
 
 			tab_trans_etape2[cpt][root] = cpt + 1;
@@ -539,9 +551,7 @@ public class Automate {
 			nombre +=2;
 		}else if(root == RegEx.ALTERN) {
 			nombre+=2;
-		}else if (root == RegEx.DOT) {
-			nombre +=2;
-		}else {
+		}else {/*root == RegEx.DOT*/
 			/*quand c'est un caractere*/
 			caracteres.add(root);
 			nombre +=2;
@@ -599,8 +609,6 @@ public class Automate {
 				}
 
 		System.out.println("nombreEtatsEtape3 : "+nombreEtatsEtape3);
-
-
 		for(int a :caracteres) {
 			System.out.println("caractere = "+ a);
 		}
@@ -616,11 +624,11 @@ public class Automate {
 				if(tab_trans_etape4[i][j]!=-1) {
 					System.out.print("["+ i+ "]["+ j + "]= "+ + tab_trans_etape4[i][j]+"  ");
 				}
-		
+
 		System.out.println("nombreEtatsEtape4 : "+nombreEtatsEtape4);
 	}
-	
-	
+
+
 	public void lireTexte(String nomFichier) {
 
 		ArrayList<String> results = new ArrayList<String>();
@@ -634,17 +642,14 @@ public class Automate {
 				if(rechercher(premierligne.substring(1))) 
 					results.add(premierligne);
 
-				
-			
-			
 			while ((ligne = reader.readLine()) != null) {
-			
-////				
-//				for(int i = 0;i<ligne.length();i++) {
-//					if((int)ligne.charAt(i)>7000)
-//					System.out.println(" char i = "+ i + " is "+ ligne.charAt(i) +" ascci = "+ (int)ligne.charAt(i) );
-//				}
-//				
+
+				////				
+				//				for(int i = 0;i<ligne.length();i++) {
+				//					if((int)ligne.charAt(i)>7000)
+				//					System.out.println(" char i = "+ i + " is "+ ligne.charAt(i) +" ascci = "+ (int)ligne.charAt(i) );
+				//				}
+				//				
 				if(rechercher(ligne)) {
 					results.add(ligne);
 
@@ -655,10 +660,10 @@ public class Automate {
 			e1.printStackTrace();
 		}
 
-		System.out.println("size of results = "+results.size());
-		for(String result: results) {
-			System.out.println(result);
-		}
+		//		System.out.println("size of results = "+results.size());
+			for(String result: results) {
+				System.out.println(result);
+			}
 	}
 }
 

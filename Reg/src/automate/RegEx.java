@@ -1,4 +1,4 @@
-package reg;
+package automate;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -10,9 +10,6 @@ public class RegEx {
   static final int ETOILE = 0xE7011E;
   static final int ALTERN = 0xA17E54;
   static final int PROTECTION = 0xBADDAD;
-  //plus
-  static final int PLUS = 43;
-
   
   static final int PARENTHESEOUVRANT = 0x16641664;
   static final int PARENTHESEFERMANT = 0x51515151;
@@ -20,19 +17,23 @@ public class RegEx {
   
   //REGEX
   private static String regEx;
-  
+
   //CONSTRUCTOR
   public RegEx(){}
 
+
   //MAIN
   public static void main(String arg[]) {
-    System.out.println("Welcome to Bogota, Mr. Thomas Anderson.");
+	String nomFichier ;
     if (arg.length!=0) {
       regEx = arg[0];
+      nomFichier = arg[1];
     } else {
       Scanner scanner = new Scanner(System.in);
       System.out.print("  >> Please enter a regEx: ");
       regEx = scanner.next();
+      System.out.print("  >> Please enter file name: ");
+      nomFichier = scanner.next();
     }
     System.out.println("  >> Parsing regEx \""+regEx+"\".");
     System.out.println("  >> ...");
@@ -44,13 +45,9 @@ public class RegEx {
       for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
       System.out.println("].");
       
-      
-      
       RegExTree ret = null;
       try {
          ret = parse();
-        
-        
         
         
         System.out.println("  >> Tree result: "+ret.toString()+".");
@@ -58,7 +55,7 @@ public class RegEx {
         System.err.println("  >> ERROR: syntax error for regEx \""+regEx+"\".");
       }
       Automate automate = new Automate(ret);
-      automate.lireTexte("56667-0.txt");
+      automate.lireTexte(nomFichier);
 
     }
 
@@ -86,7 +83,6 @@ public class RegEx {
     if (c=='|') return ALTERN;
     if (c=='(') return PARENTHESEOUVRANT;
     if (c==')') return PARENTHESEFERMANT;
-    if (c=='+') return PLUS;
 
     return (int)c;
   }
@@ -95,8 +91,6 @@ public class RegEx {
     while (containEtoile(result)) result=processEtoile(result);
     while (containConcat(result)) result=processConcat(result);
     while (containAltern(result)) result=processAltern(result);
-    while (containPlus(result)) result=processPlus(result);
-
 
     if (result.size()>1) throw new Exception();
 
@@ -128,34 +122,14 @@ public class RegEx {
     if (!found) throw new Exception();
     return result;
   }
-  private static boolean containPlus(ArrayList<RegExTree> trees) {
-	    for (RegExTree t: trees) if (t.root==PLUS && t.subTrees.isEmpty()) return true;
-	    return false;
-	  }
+  
   
   private static boolean containEtoile(ArrayList<RegExTree> trees) {
     for (RegExTree t: trees) if (t.root==ETOILE && t.subTrees.isEmpty()) return true;
     return false;
   }
   
-  private static ArrayList<RegExTree> processPlus(ArrayList<RegExTree> trees) throws Exception {
-	    ArrayList<RegExTree> result = new ArrayList<RegExTree>();
-	    boolean found = false;
-	    for (RegExTree t: trees) {
-	      if (!found && t.root==PLUS && t.subTrees.isEmpty()) {
-	        if (result.isEmpty()) throw new Exception();
-	        found = true;
-	        RegExTree last = result.remove(result.size()-1);
-	        ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
-	        subTrees.add(last);
-	        result.add(new RegExTree(PLUS, subTrees));
-	      } else {
-	        result.add(t);
-	      }
-	    }
-	    return result;
-	  }
-  
+ 
   private static ArrayList<RegExTree> processEtoile(ArrayList<RegExTree> trees) throws Exception {
     ArrayList<RegExTree> result = new ArrayList<RegExTree>();
     boolean found = false;
@@ -288,7 +262,6 @@ class RegExTree {
     if (root==RegEx.ETOILE) return "*";
     if (root==RegEx.ALTERN) return "|";
     if (root==RegEx.DOT) return ".";
-    if (root==RegEx.PLUS) return "+";
 
     return Character.toString((char)root);
   }

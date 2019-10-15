@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <project name="Reg" default="compile" basedir=".">
+   <description>
+   </description>
+
+   	<target name="compile">
+   		<mkdir dir="bin"/>
+   		<javac srcdir="src" destdir="bin"/>
+   	</target>
+
+   	<target name="jar-automate" depends="compile">
+   		<mkdir dir="exe"/>
+   			<jar destfile="exe/automate.jar" basedir="bin">
+   				<manifest>
+   					<attribute name="Main-Class" value="automate.RegEx"/>
+   				</manifest>
+   			</jar>
+   	</target>
+	<target name="jar-kmp" depends="compile">
+   		<mkdir dir="exe"/>
+   			<jar destfile="exe/kmp.jar" basedir="bin">
+   				<manifest>
+   					<attribute name="Main-Class" value="kmp.Matching"/>
+   				</manifest>
+   			</jar>
+   	</target>			
+
+   	<target name="jar-radix" depends="compile">
+   	   		<mkdir dir="exe"/>
+   	   			<jar destfile="exe/radix.jar" basedir="bin">
+   	   				<manifest>
+   	   					<attribute name="Main-Class" value="radix.Radix"/>
+   	   				</manifest>
+   	   			</jar>
+   	   	</target>	
+   	
+   	<target name="jar" depends="jar-automate,jar-kmp,jar-radix">
+   	</target>	
+   	
+	<target name="run-test" depends="compile" description="Execution des tests">
+   	   	<mkdir dir="result"/>
+	       <java classname="performance.TestPerformance">
+	       	<classpath>
+	       	    <pathelement path="bin"/>
+	       	 </classpath>
+	       	</java>
+   	 </target>	
+
+   	<target name="clean">
+   	   		<delete dir="bin"/>
+   	   		<delete dir="exe"/>
+	   		<delete dir="result"/>
+   			<delete file = "result.png"/>
+   		    <delete file = "result2.png"/>
+   		    <delete file = "resultReg.png"/>
+   	</target>
+   	
+    <!-- =================================================================== -->
+    <!-- Génération de l'archive jar                           -->
+    <!-- =================================================================== -->
+    <target name="dist">
+      <zip zipfile="daar-projet-offline-GUO.zip" basedir="." />
+    </target> 
+   	
+   </project>

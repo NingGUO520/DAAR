@@ -1,0 +1,37 @@
+L'arborescence du projet:
+	-src :les fichiers sources (.java) 
+		-automate
+		-kmp
+		-radix 
+	-bin : fichiers .class
+	-test : un repertoire contenant les instances de test
+		-56667-0.txt
+		-test.txt
+		-test2.txt
+		-test3.txt
+	-exe :les fichiers executables (.jar)
+	-result : les fichiers .txt genere par les tests 
+
+
+Démarrage:
+	Dans le repertoire Reg, on execute les commande suivantes:
+		$ ant
+
+	et puis pour generer les jar :
+		$ ant jar
+		(Il y a trois jar sont genere dans /exe : automate.jar kmp.jar radix.jar)
+		
+	pour lancer le jar:
+		$ java -jar exe/<nomJar>
+		
+	pour nettoyer le repertoir:
+		$ ant clean
+
+Visualiser les results de test:
+	$ ant run-test   
+	$ gnuplot graphe.plot(graphe2.plot/graphe_baton.plot)
+
+le graphe du resultat : result.png/result2.png/resultReg.png
+		
+Ning GUO
+14/10/2019
