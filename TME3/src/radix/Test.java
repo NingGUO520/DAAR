@@ -8,8 +8,6 @@ public class Test {
 
 	public class RadixTree{
 
-
-
 		String chars;
 		ArrayList<RadixTree> fils ;
 		public RadixTree(String lettres) {
@@ -25,11 +23,9 @@ public class Test {
 
 		public boolean est_feuille() {
 			return fils.isEmpty();
-
 		}
-		
-
 	}
+	
 	public class Pair{
 		int ligne;
 		int col;
@@ -70,7 +66,6 @@ public class Test {
 				return false;
 			}
 		}
-
 		return true;
 	}
 	public void insertion(RadixTree arbre, String mot) {
@@ -86,8 +81,6 @@ public class Test {
 				}
 			}
 		}
-		
-
 	}
 
 	public boolean rechercher(RadixTree arbre, String motif) {
@@ -103,7 +96,6 @@ public class Test {
 			}
 
 		}
-
 		return false;
 
 	}
