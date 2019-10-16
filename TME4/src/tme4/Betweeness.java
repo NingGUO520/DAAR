@@ -30,22 +30,18 @@ public class Betweeness {
 		public int compareTo(Pair o) {
 			if( o.p1 > this.p1) return 1;
 			if( o.p1 < this.p1) return -1;
-
-
 			if ( this.p2 > o.p2 )return -1;
 
 			if ( this.p2 < o.p2 )return 1;
 			return 0;
-
-
 		}
+
 		@Override
 		public boolean equals(Object obj) 
 		{
 			Pair pair = (Pair)obj;
 			if(this.p1 == pair.p1 && this.p2 == pair.p2) return true;
 			return false;
-
 		}
 	}
 
@@ -58,7 +54,6 @@ public class Betweeness {
 			Reader reader = new InputStreamReader(gzipStream);
 			String ligne;
 			BufferedReader buffered = new BufferedReader(reader);
-
 			Stream<Pair> stream =	buffered.lines()
 					.filter(line -> 
 					Integer.parseInt(line.split(" ")[2]) <= 1500 
@@ -81,6 +76,7 @@ public class Betweeness {
 
 		return aretes;
 	}
+<<<<<<< HEAD
 	
 	
 	 public int[][] calculShortestPaths(int size, int edgeThreshold) {
@@ -111,12 +107,53 @@ public class Betweeness {
 		    }
 		    
 		
+=======
+
+
+	public String[][] calculShortestPaths(int size,ArrayList<Pair> liens) {
+		String[][] paths=new String[size][size];
+		for (int i=0;i<size;i++) for (int j=0;j<size;j++) paths[i][j]="";
+
+		//		    matrice d'adjacence
+		double[][] m = new double[size][size];
+		for(Pair pair : liens) {
+			m[pair.p1][pair.p2] = 1;
+			m[pair.p2][pair.p1] = 1;
+		}
+
+		for(int i =0;i<size;i++) {
+			for (int j=0;j<size;j++) {
+				if(m[i][j]!=1)
+					m[i][j]= Double.MAX_VALUE;
+
+			}
+		}
+		
+		for(int k = 0 ; k< size;k++) {
+			for(int i = 0 ; i< size;i++) {
+				for(int j = i+1 ; j<size;j++) {
+					if(m[i][j]> m[i][k]+m[k][j]) {
+						m[i][j]= m[i][k]+m[k][j];
+						paths[i][j]=paths[i][k]+" "+k+" "+paths[k][j];
+						
+					}    	    	  	    	    	    	
+				}    	           	        	
+			}
+		}
+		return paths;
+	}
+
+
+>>>>>>> ba1cb7ceb3a4cc38d1f711ebb78cceb402e756dc
 	public static void main(String[] args)  {
 
 		Betweeness b = new Betweeness();
 		String fileName = "./rollernet.dyn.gz";
 		List<Pair> aretes =  b.lireFile(fileName);
+<<<<<<< HEAD
 	
+=======
+>>>>>>> ba1cb7ceb3a4cc38d1f711ebb78cceb402e756dc
 		ArrayList<Pair> liens = new ArrayList<Pair>();
 		for(Pair pair: aretes) {
 			if(!liens.contains(pair)) {
@@ -125,7 +162,7 @@ public class Betweeness {
 		}
 		System.out.println("nombre de liens" + liens.size());
 		Collections.sort(liens);
-		
+
 		HashSet<Integer> sommets = new HashSet<Integer>();
 		for(Pair p : liens)
 		{
@@ -135,8 +172,14 @@ public class Betweeness {
 		}
 		System.out.println("nombre de sommtes" + sommets.size());
 
+		int size = sommets.size()+1;
+		String[][] result = b.calculShortestPaths(size,liens);
+		for(int i=0;i<size;i++)
+			for(int j = i+1;j<size;j++)
+				System.out.println(result[i][j]);
 		
 		
-
+		
+		
 	}
 }
