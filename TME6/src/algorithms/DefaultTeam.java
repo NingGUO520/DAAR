@@ -22,7 +22,7 @@ public class DefaultTeam {
 
 	public ArrayList<Point> renew(ArrayList<Point> chemins){
 		ArrayList<Point> result = new ArrayList<Point>();
-		
+
 		int x = (int)(Math.random() * chemins.size());
 		int y = (int)(Math.random() * chemins.size());
 		if(x>y) {
@@ -36,27 +36,28 @@ public class DefaultTeam {
 		for(int i = y;i>=x;i--) {
 			result.add(chemins.get(i));
 		}
-		
+
 		for(int i = y+1;i<chemins.size();i++) {
 			result.add(chemins.get(i));
 		}
-		
-//		System.out.println("size of result " + result.size());
+
+		//		System.out.println("size of result " + result.size());
 		return result;
 	}
 
 
 
-	public  ArrayList<Point> algoPlusCourt(ArrayList<Point> hitPoints,int edgeThreshold){
+	public  ArrayList<Point> algoPlusCourt(ArrayList<Point> hitPoints,int edgeThreshold,int i){
+		ArrayList<Point> hit = (ArrayList<Point>) hitPoints.clone();
 		ArrayList<Point> chemin = new ArrayList<Point>();
-		Point depart = hitPoints.get(0);
+		Point depart = hit.get(i);
 		chemin.add(depart);
-		hitPoints.remove(depart);
+		hit.remove(depart);
 		Point suivant;
-		while(!hitPoints.isEmpty()) {
-			suivant = getPlusProchePoint( depart,  edgeThreshold,  hitPoints);
+		while(!hit.isEmpty()) {
+			suivant = getPlusProchePoint( depart,  edgeThreshold,  hit);
 			chemin.add(suivant);
-			hitPoints.remove(suivant);
+			hit.remove(suivant);
 			depart = suivant;
 		}
 		return chemin;
@@ -64,7 +65,7 @@ public class DefaultTeam {
 
 	public ArrayList<Point> calculAngularTSP(ArrayList<Point> points, int edgeThreshold, ArrayList<Point> hitPoints) {
 
-		
+
 		HashMap<Integer,Integer> dejaVue = new HashMap<Integer,Integer>();
 		int[][] paths=new int[points.size()][points.size()];
 		for (int i=0;i<paths.length;i++) for (int j=0;j<paths.length;j++) paths[i][j]=i;
@@ -95,10 +96,11 @@ public class DefaultTeam {
 
 		ArrayList<Point> resultFinal = new ArrayList<Point>();
 
-		ArrayList<Point> chemin = algoPlusCourt( hitPoints, edgeThreshold);
-//		ArrayList<Point> chemin = hitPoints;
-//		double min = Integer.MAX_VALUE;
-//		for(int i = 0;i<1000;i++) {
+		//		ArrayList<Point> chemin = hitPoints;
+		double min = Integer.MAX_VALUE;
+		for(int i = 0;i<hitPoints.size();i++) {
+			ArrayList<Point> chemin = algoPlusCourt( hitPoints, edgeThreshold,i);
+
 			ArrayList<Point> result = new ArrayList<Point>();
 
 			int s,t;
@@ -110,33 +112,33 @@ public class DefaultTeam {
 					if (points.get(s).distance(points.get(paths[s][t]))>edgeThreshold){
 						System.err.println("FATAL ERROR. VERY PANICKED.");
 					}
-	
+
 					p=points.get(s);
 					q=points.get(paths[s][t]);
-	
+
 					result.add(p);
-	
+
 					s=paths[s][t];
 				}
 				if (points.get(s).distance(points.get(paths[s][t]))>edgeThreshold || paths[s][t]!=t){
 					System.err.println("FATAL ERROR. VERY PANICKED.");
 				}
-	
+
 				p=points.get(s);
 				q=points.get(t);
-	
+
 				result.add(p);
 				result.add(q);
 			}
-	
-//			double score = Evaluator.score(result);
-//			System.out.println("le score est  = " + score);
-//			if(score<min) {
-//				min = score;
-//				resultFinal = result;
-//			}
-//			chemin = renew(chemin);
-//		}
-		return result;
+
+			double score = Evaluator.score(result);
+			System.out.println("le score est  = " + score);
+			if(score<min) {
+				min = score;
+				resultFinal = result;
+			}
+			//			chemin = renew(chemin);
+		}
+		return resultFinal;
 	}
 }
