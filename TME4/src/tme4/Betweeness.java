@@ -76,6 +76,38 @@ public class Betweeness {
 
 		return aretes;
 	}
+<<<<<<< HEAD
+	
+	
+	 public int[][] calculShortestPaths(int size, int edgeThreshold) {
+		    int[][] paths=new int[size][size];
+		    for (int i=0;i<paths.length;i++) for (int j=0;j<paths.length;j++) paths[i][j]=j;
+		    
+		    
+//		    matrice d'adjacence
+		    double[][] m = new double[size][size];
+		    for(int i =0;i<size;i++) {
+		    	
+		    	for (int j=0;j<size;j++) {
+		    		
+		    		
+		    		double d = points.get(i).distance(points.get(j));
+		    		if(d<edgeThreshold) {
+		    			
+		    			
+		    			m[i][j] = d;
+		    		}else {
+		    			  			
+		    			m[i][j]= Double.MAX_VALUE;
+		    			
+		    		}
+		    		
+		    	}
+		    	    	
+		    }
+		    
+		
+=======
 
 
 	public String[][] calculShortestPaths(int size,ArrayList<Pair> liens) {
@@ -111,11 +143,16 @@ public class Betweeness {
 	}
 
 
+>>>>>>> ba1cb7ceb3a4cc38d1f711ebb78cceb402e756dc
 	public static void main(String[] args)  {
 
 		Betweeness b = new Betweeness();
 		String fileName = "./rollernet.dyn.gz";
 		List<Pair> aretes =  b.lireFile(fileName);
+<<<<<<< HEAD
+	
+=======
+>>>>>>> ba1cb7ceb3a4cc38d1f711ebb78cceb402e756dc
 		ArrayList<Pair> liens = new ArrayList<Pair>();
 		for(Pair pair: aretes) {
 			if(!liens.contains(pair)) {
